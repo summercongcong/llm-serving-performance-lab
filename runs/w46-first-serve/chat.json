@@ -1,0 +1,22 @@
+{
+  "id": "chatcmpl-a2ab3018edd32778",
+  "object": "chat.completion",
+  "created": 1794672765,
+  "model": "Qwen/Qwen3-0.6B",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "<think>\n好的，用户让我用一句话打个招呼。首先，我需要确定用户的需求是什么。他们可能是在测试我的反应，或者想看看我的礼貌程度。用户可能没有说太多，但需要一个简短而友好的回应。\n\n接下来，我要考虑不同的场景。比如，朋友之间、同事"
+      },
+      "finish_reason": "length"
+    }
+  ],
+  "system_fingerprint": "vllm-0.33.0-d3cbeec1",
+  "usage": {
+    "prompt_tokens": 13,
+    "total_tokens": 77,
+    "completion_tokens": 64
+  }
+}

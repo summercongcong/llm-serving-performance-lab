@@ -17,21 +17,28 @@ Production-oriented LLM serving experiments for AI Infra / Model Serving roles.
 
 ## Status
 
-- [ ] GPU instance up; `nvidia-smi` recorded
-- [ ] vLLM serving
-- [ ] `/v1/models` OK
-- [ ] Non-streaming chat OK
-- [ ] Logs under `runs/w46-first-serve/`
-- [ ] Instance released; billing checked
+- [x] GPU instance up; `nvidia-smi` recorded (A10, Driver 580.126.09)
+- [x] vLLM serving (`vllm/vllm-openai:latest`, fingerprint `vllm-0.33.0-d3cbeec1`)
+- [x] Non-streaming chat OK (`Qwen/Qwen3-0.6B`) — see `runs/w46-first-serve/`
+- [ ] Confirm `/v1/models` saved in run folder (optional if chat already proved API up)
+- [ ] Instance released; billing checked; bandwidth peak lowered if raised for pull
 
-## Quick start (fill in after first successful run)
+## Quick start (reproducible smoke)
 
 ```bash
-# TODO: paste exact image / vLLM install / serve command used on Aliyun A10
+docker run --gpus all --name vllm \
+  -p 8000:8000 \
+  -v ~/.cache/huggingface:/root/.cache/huggingface \
+  vllm/vllm-openai:latest \
+  --model Qwen/Qwen3-0.6B \
+  --host 0.0.0.0 \
+  --port 8000
 ```
 
 ```bash
-# TODO: paste working curl for /v1/models and chat
+curl -s http://127.0.0.1:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model":"Qwen/Qwen3-0.6B","messages":[{"role":"user","content":"用一句话打个招呼"}],"max_tokens":64,"temperature":0}'
 ```
 
 ## Repo layout
