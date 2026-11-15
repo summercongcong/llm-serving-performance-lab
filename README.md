@@ -1,29 +1,39 @@
-# LLM Serving Performance Lab
+# LLM Infra Lab
 
-Production-oriented LLM serving experiments for AI Infra / Model Serving roles.
+Unified lab for **AI Infrastructure / Model Serving** skills:
 
-**Current focus (Roadmap 3.0 Stage 1):** get vLLM OpenAI-compatible API running on a single GPU and record a reproducible first chat.
+| Capability | Meaning |
+|------------|---------|
+| Foundations | What the model computes (Attention, shapes, residual/FFN) |
+| KV / runtime literacy | Prefill vs decode, memory math |
+| Deploy | vLLM (and later K8s) on Spot GPU |
+| Measure | Load tests: TTFT, throughput, tail latency |
+| Observe | Metrics / Prometheus |
+| Diagnose & change | Bottlenecks, A/B, small engine fixes |
+| Reliability | SLO, failure drills |
+| Runner (optional) | Spot jobs with checkpoint resume |
 
-## Hardware / cloud (this week)
+**Single roadmap:** [`ROADMAP.md`](./ROADMAP.md) · **Weekly log:** [`WEEKLY.md`](./WEEKLY.md)
+
+Legacy theory notes live under [`notes/foundations/`](./notes/foundations/) (imported from the archived `llm-infra-lab` weeks 0–2).
+
+## Hardware (current)
 
 | Item | Choice |
 |------|--------|
-| Cloud | Alibaba Cloud (Aliyun) |
-| Instance | Preemptible (抢占式) |
-| GPU | NVIDIA A10 (24GB) |
-| Model (first run) | Qwen3-0.6B (or equivalent small instruct model) |
-
-> Note: Roadmap 3.0 mentioned L20 48GB. A10 24GB is enough for Stage 1 smoke test. Prefer small models; do not assume 8B fits without checking VRAM.
+| Cloud | Alibaba Cloud Spot |
+| GPU | NVIDIA A10 24GB (Seoul verified) |
+| First model | `Qwen/Qwen3-0.6B` |
 
 ## Status
 
-- [x] GPU instance up; `nvidia-smi` recorded (A10, Driver 580.126.09)
-- [x] vLLM serving (`vllm/vllm-openai:latest`, fingerprint `vllm-0.33.0-d3cbeec1`)
-- [x] Non-streaming chat OK (`Qwen/Qwen3-0.6B`) — see `runs/w46-first-serve/`
-- [ ] Confirm `/v1/models` saved in run folder (optional if chat already proved API up)
-- [x] Instance released; billing ~¥7; bandwidth peak lowered (2026-11-15)
+- [x] Foundations notes imported
+- [x] S1a smoke: vLLM chat on A10 — `runs/w46-first-serve/` (~¥7)
+- [ ] S1b baseline load matrix — **next**
+- [ ] S1c metrics / Prometheus
+- [ ] S2 KV + diagnose aligned with numbers
 
-## Quick start (reproducible smoke)
+## Quick start (smoke)
 
 ```bash
 docker run --gpus all --name vllm \
@@ -36,22 +46,22 @@ docker run --gpus all --name vllm \
 ```
 
 ```bash
-curl -s http://127.0.0.1:8000/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{"model":"Qwen/Qwen3-0.6B","messages":[{"role":"user","content":"用一句话打个招呼"}],"max_tokens":64,"temperature":0}'
+./scripts/curl_smoke.sh
+# or set BASE_URL / MODEL as needed
 ```
 
-## Repo layout
+## Layout
 
 ```text
-configs/    # serve configs
-scripts/    # serve / curl helpers
-runs/       # per-experiment logs and results
-notes/      # short notes
+notes/foundations/   theory (Attention, GPT block)
+configs/             serve & bench snapshots
+scripts/             serve / curl / bench helpers
+runs/                raw evidence per experiment
+runner/              optional Spot training resume (later)
 ```
 
 ## Safety
 
-- Preemptible instances can be reclaimed anytime — save logs to this repo before release.
-- Set a budget cap before each rental; shut down when done.
-- Never commit cloud keys, tokens, or `.env` files.
+- Write an experiment card before renting GPU; release when done.
+- Inbound traffic on pay-by-traffic ECS is typically free; watch instance hours.
+- Never commit cloud keys or tokens.
