@@ -21,7 +21,7 @@ Production-oriented LLM serving experiments for AI Infra / Model Serving roles.
 - [x] vLLM serving (`vllm/vllm-openai:latest`, fingerprint `vllm-0.33.0-d3cbeec1`)
 - [x] Non-streaming chat OK (`Qwen/Qwen3-0.6B`) — see `runs/w46-first-serve/`
 - [ ] Confirm `/v1/models` saved in run folder (optional if chat already proved API up)
-- [ ] Instance released; billing checked; bandwidth peak lowered if raised for pull
+- [x] Instance released; billing ~¥7; bandwidth peak lowered (2026-11-15)
 
 ## Quick start (reproducible smoke)
 
